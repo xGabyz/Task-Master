@@ -1,82 +1,47 @@
 <?php
-// ==========================================
-// AULA 01: O CÓDIGO SPAGHETTI (Tudo misturado)
-// ==========================================
+require_once __DIR__ . '/src/Model/Task.php';
 
-// 1. CONEXÃO COM O BANCO DE DADOS E CRIAÇÃO DA TABELA (Acoplamento de Infraestrutura)
 $dbFile = __DIR__ . '/tasks.sqlite';
 $pdo = new PDO('sqlite:' . $dbFile);
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-$pdo->exec("CREATE TABLE IF NOT EXISTS tasks (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title TEXT NOT NULL,
-    done INTEGER DEFAULT 0,
-    descricao TEXT DEFAULT '',
-    data_vencimento TEXT DEFAULT '',
-    responsavel TEXT DEFAULT ''
-)");
+$taskModel = new Task($pdo);
+$taskModel->initializeSchema();
 
-$columns = $pdo->query("PRAGMA table_info(tasks)")->fetchAll(PDO::FETCH_COLUMN, 1);
-foreach ([
-    'descricao' => "TEXT DEFAULT ''",
-    'data_vencimento' => "TEXT DEFAULT ''",
-    'responsavel' => "TEXT DEFAULT ''",
-] as $column => $definition) {
-    if (!in_array($column, $columns, true)) {
-        $pdo->exec("ALTER TABLE tasks ADD COLUMN $column $definition");
-    }
-}
-
-// 2. LÓGICA DE NEGÓCIO E CONTROLE DE REQUISIÇÕES MISTURADOS
 $error = '';
 
-// Criar nova tarefa
-if ($_SERVER['REQUEST_METHOD'] === 'POST' 
-&& isset($_POST['title'])
-&& isset($_POST['descricao'])
-&& isset($_POST['data_vencimento'])
-&& isset($_POST['responsavel'])
+if ($_SERVER['REQUEST_METHOD'] === 'POST'
+    && isset($_POST['title'], $_POST['descricao'], $_POST['data_vencimento'], $_POST['responsavel'])
 ) {
-    $title = trim($_POST['title']);
-    $descricao = trim($_POST['descricao']);
-    $data_vencimento = trim($_POST['data_vencimento']);
-    $responsavel = trim($_POST['responsavel']);
+    try {
+        $taskModel->create([
+            'title' => $_POST['title'],
+            'descricao' => $_POST['descricao'],
+            'data_vencimento' => $_POST['data_vencimento'],
+            'responsavel' => $_POST['responsavel'],
+        ]);
 
-    // Regra de negócio solta no meio do arquivo
-    if (empty($title)) {
-        $error = "O título da tarefa não pode estar vazio!";
-    } else {
-        $stmt = $pdo->prepare("INSERT INTO tasks (title, descricao, data_vencimento, responsavel) VALUES (:title, :descricao, :data_vencimento, :responsavel)");
-        $stmt->bindValue(':title', $title);
-        $stmt->bindValue(':descricao', $descricao);
-        $stmt->bindValue(':data_vencimento', $data_vencimento);
-        $stmt->bindValue(':responsavel', $responsavel);
-        $stmt->execute();
-        
-        // Redirecionamento misturado com a lógica
-        header("Location: index.php");
+        header('Location: index.php');
         exit;
+    } catch (InvalidArgumentException $e) {
+        $error = $e->getMessage();
     }
 }
 
-// Concluir ou excluir tarefa
-if (isset($_GET['action']) && isset($_GET['id'])) {
+if (isset($_GET['action'], $_GET['id'])) {
     $id = (int) $_GET['id'];
-    
+
     if ($_GET['action'] === 'complete') {
-        $pdo->exec("UPDATE tasks SET done = 1 WHERE id = $id");
+        $taskModel->complete($id);
     } elseif ($_GET['action'] === 'delete') {
-        $pdo->exec("DELETE FROM tasks WHERE id = $id");
+        $taskModel->delete($id);
     }
-    
-    header("Location: index.php");
+
+    header('Location: index.php');
     exit;
 }
 
-// 3. BUSCA DE DADOS MISTURADA COM A VISUALIZAÇÃO
-$stmt = $pdo->query("SELECT * FROM tasks ORDER BY id DESC");
-$tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$tasks = $taskModel->getAll();
 ?>
 
 <!DOCTYPE html>
