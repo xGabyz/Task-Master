@@ -8,15 +8,21 @@ class TaskController {
 
     public function index($error = null) {
         $tasks = $this->model->getAll();
-        require __DIR__ . '/src/View/list.php'; // Envia para a View
+        require __DIR__ . '/../View/List.php';
     }
 
     public function create() {
         try {
-            $this->model->save($_POST['title'], $_POST['description'], $_POST['due_date']);
+            $this->model->create([
+                'title' => $_POST['title'] ?? '',
+                'descricao' => $_POST['descricao'] ?? '',
+                'data_vencimento' => $_POST['data_vencimento'] ?? '',
+                'responsavel' => $_POST['responsavel'] ?? '',
+            ]);
             header("Location: index.php");
+            exit;
         } catch (Exception $e) {
-            $this->index($e->getMessage()); // Mostra o erro na tela
+            $this->index($e->getMessage());
         }
     }
 

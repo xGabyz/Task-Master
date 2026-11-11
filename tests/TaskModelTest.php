@@ -48,3 +48,4 @@ class TaskModelTest extends TestCase
         $this->assertSame('Ana', $tasks[0]['responsavel']);
     }
 }
+?>

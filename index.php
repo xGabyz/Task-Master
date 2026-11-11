@@ -20,10 +20,10 @@ $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 // 2. Roteamento básico
 $controller = new TaskController($pdo);
-$action = $_GET['action'] ?? 'index'; // Se não vier action, usa 'index'
+$action = $_GET['action'] ?? ($_SERVER['REQUEST_METHOD'] === 'POST' ? 'create' : 'index');
 
 if (method_exists($controller, $action)) {
-    $controller->$action(); // Executa o método correspondente
+    $controller->$action();
 } else {
     echo "Página não encontrada 404";
 }
