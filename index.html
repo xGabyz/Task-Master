@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Task Master - MVVM Edition</title>
+        <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f3f4f6; color: #333; display: flex; justify-content: center; padding-top: 50px; }
+        .container { background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%; max-width: 500px; }
+        h1 { font-size: 1.5rem; text-align: center; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .error { color: #dc2626; background: #fee2e2; padding: 10px; border-radius: 4px; font-size: 0.9rem; }
+        .form-group { display: grid; gap: 10px; margin-top: 20px; margin-bottom: 20px; }
+        input, textarea { box-sizing: border-box; width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font: inherit; }
+        textarea { min-height: 76px; resize: vertical; }
+        button { background: #2563eb; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #1d4ed8; }
+        ul { list-style: none; padding: 0; }
+        li { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 12px; border-bottom: 1px solid #eee; }
+        .task-details { min-width: 0; }
+        .task-details p { margin: 6px 0 0; color: #6b7280; font-size: 0.9rem; overflow-wrap: anywhere; }
+        li.done span { text-decoration: line-through; color: #9ca3af; }
+        .actions a { text-decoration: none; margin-left: 10px; cursor: pointer; }
+    </style></head>
+<body>
+    <div id="app" class="container">
+        <h1>Task Master (MVVM)</h1>
+       
+        <div class="form-group">
+            <input type="text" id="taskTitle" placeholder="O que precisa ser feito?">
+            <button id="addBtn">Adicionar</button>
+        </div>
+
+        <ul id="taskList"></ul>
+    </div>
+
+    <script src="js/TaskViewModel.js"></script>
+</body>
+</html>

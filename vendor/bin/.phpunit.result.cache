@@ -1,1 +1,1 @@
-{"version":2,"defects":[],"times":{"TaskModelTest::testNaoPodeCriarTarefaSemTitulo":0,"TaskModelTest::testCriaTarefaComOsDadosInformados":0,"TaskPresenterTest::testIndexFormataTitulosParaMaiusculo":0.001}}
+{"version":2,"defects":{"ApiTest::testApiRetornaListaEmJson":7},"times":{"TaskModelTest::testNaoPodeCriarTarefaSemTitulo":0,"TaskModelTest::testCriaTarefaComOsDadosInformados":0,"TaskPresenterTest::testIndexFormataTitulosParaMaiusculo":0.001,"ApiTest::testApiRetornaListaEmJson":0.01}}
